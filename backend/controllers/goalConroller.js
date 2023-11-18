@@ -39,8 +39,6 @@ const updateGoalController = async (req, res) => {
   const { id } = req.params;
   const { text } = req.body;
 
-  console.log(id);
-
   try {
     const updateGoal = await updateGoalService(id, text);
 

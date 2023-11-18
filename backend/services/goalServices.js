@@ -111,7 +111,7 @@ const deleteGoalService = async (id) => {
 
     return {
       statusCode: 200,
-      message: deleteGoal,
+      message: { id: deleteGoal._id },
     };
   } catch (error) {
     console.log(error);
