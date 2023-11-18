@@ -8,6 +8,6 @@ const {
 } = require("../controllers/goalConroller");
 
 router.route("/").get(getGoalController).post(createGoalController);
-router.route("/:id").put(updateGoalController).delete(deleteGoalController);
+router.route("/:id").delete(deleteGoalController).put(updateGoalController);
 
 module.exports = router;
