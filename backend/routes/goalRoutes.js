@@ -7,7 +7,15 @@ const {
   deleteGoalController,
 } = require("../controllers/goalConroller");
 
-router.route("/").get(getGoalController).post(createGoalController);
-router.route("/:id").delete(deleteGoalController).put(updateGoalController);
+const { protect } = require("../middlewares/authMiddleware");
+
+router
+  .route("/")
+  .get(protect, getGoalController)
+  .post(protect, createGoalController);
+router
+  .route("/:id")
+  .delete(protect, deleteGoalController)
+  .put(protect, updateGoalController);
 
 module.exports = router;

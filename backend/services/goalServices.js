@@ -1,8 +1,9 @@
 const Goal = require("../models/goalModel");
+const User = require("../models/userModel");
 
-const getGoalsService = async () => {
+const getGoalsService = async (id) => {
   try {
-    const goals = await Goal.find();
+    const goals = await Goal.find({ user: id });
 
     if (goals.length === 0) {
       return {
@@ -20,7 +21,7 @@ const getGoalsService = async () => {
   }
 };
 
-const createGoalService = async (text) => {
+const createGoalService = async (id, text) => {
   try {
     if (!text) {
       return {
@@ -31,6 +32,7 @@ const createGoalService = async (text) => {
 
     const goal = await Goal.create({
       text,
+      user: id,
     });
 
     return {
@@ -42,7 +44,7 @@ const createGoalService = async (text) => {
   }
 };
 
-const updateGoalService = async (id, text) => {
+const updateGoalService = async (userId, id, text) => {
   try {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return {
@@ -67,6 +69,22 @@ const updateGoalService = async (id, text) => {
       };
     }
 
+    const user = await User.findById({ _id: userId });
+
+    if (!user) {
+      return {
+        statusCode: 401,
+        message: "User not found",
+      };
+    }
+
+    if (goal.user.toString() !== user.id) {
+      return {
+        statusCode: 401,
+        message: "User not authorized",
+      };
+    }
+
     const updatedGoal = await Goal.findByIdAndUpdate(
       id,
       { text: text },
@@ -82,7 +100,7 @@ const updateGoalService = async (id, text) => {
   }
 };
 
-const deleteGoalService = async (id) => {
+const deleteGoalService = async (userId, id) => {
   try {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return {
@@ -104,6 +122,22 @@ const deleteGoalService = async (id) => {
       return {
         statusCode: 404,
         message: "Not found",
+      };
+    }
+
+    const user = await User.findById({ _id: userId });
+
+    if (!user) {
+      return {
+        statusCode: 401,
+        message: "User not found",
+      };
+    }
+
+    if (goal.user.toString() !== user.id) {
+      return {
+        statusCode: 401,
+        message: "User not authorized",
       };
     }
 

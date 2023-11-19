@@ -9,7 +9,7 @@ const {
 // @route GET /api/goals
 // @access Private
 const getGoalController = async (req, res) => {
-  const getGoals = await getGoalsService();
+  const getGoals = await getGoalsService(req.user.id);
   try {
     res.status(getGoals.statusCode).json(getGoals.message);
   } catch (error) {
@@ -22,7 +22,9 @@ const getGoalController = async (req, res) => {
 // @access Private
 const createGoalController = async (req, res) => {
   try {
-    const createGoal = await createGoalService(req.body.text);
+    const { text } = req.body;
+    const { id } = req.user;
+    const createGoal = await createGoalService(id, text);
 
     console.log(createGoal);
 
@@ -36,13 +38,14 @@ const createGoalController = async (req, res) => {
 // @route Put /api/goals/:id
 // @access Private
 const updateGoalController = async (req, res) => {
+  const userId = req.user.id;
   const { id } = req.params;
   const { text } = req.body;
 
   try {
-    const updateGoal = await updateGoalService(id, text);
+    const updateGoal = await updateGoalService(userId, id, text);
 
-    res.status(updateGoal.statusCode).send(updateGoal);
+    res.status(updateGoal.statusCode).send(updateGoal.message);
   } catch (error) {
     console.log(error);
   }
@@ -52,10 +55,11 @@ const updateGoalController = async (req, res) => {
 // @route Delete /api/goals/:id
 // @access Private
 const deleteGoalController = async (req, res) => {
+  const userId = req.user.id;
   const { id } = req.params;
 
   try {
-    const deleteGoal = await deleteGoalService(id);
+    const deleteGoal = await deleteGoalService(userId, id);
 
     res.status(deleteGoal.statusCode).json(deleteGoal.message);
   } catch (error) {

@@ -3,6 +3,7 @@ const dotenv = require("dotenv").config();
 const connectDB = require("./config/db.js");
 
 const port = process.env.PORT || 3000;
+const users = require("./routes/userRoutes.js");
 const goals = require("./routes/goalRoutes.js");
 
 connectDB();
@@ -12,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/api/users", users);
 app.use("/api/goal", goals);
 
 app.listen(port, () => {
